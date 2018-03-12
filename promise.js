@@ -116,5 +116,44 @@ run().then(function(data){
     第三次 resolve0.49040459200760167
     由此可知then方法可以无限调用下去。
 */
-
 //根绝这个特性，我们就可以将相互依赖的多个异步逻辑，进行比较顺序的管理了。下面举一个拥有3个异步操作的例子，代码有些长。
+
+//第一个异步任务
+function run_a(){
+    return new Promise(function(resolve, reject){
+        //假设已经进行了异步操作，并且获得了数据
+        resolve("step1");
+    });
+}
+//第二个异步任务
+function run_b(data_a){
+    return new Promise(function(resolve, reject){
+        //假设已经进行了异步操作，并且获得了数据
+        console.log(data_a);
+        resolve("step2");
+    });
+}
+//第三个异步任务
+function run_c(data_b){
+    return new Promise(function(resolve, reject){
+        //假设已经进行了异步操作，并且获得了数据
+        console.log(data_b);
+        resolve("step3");
+    });
+}
+
+//连续调用
+run_a().then(function(data){
+    return run_b(data);
+}).then(function(data){
+    return run_c(data);
+}).then(function(data){
+    console.log(data);
+});
+
+/*运行结果
+  step1
+  step2
+  step3
+*/
+//这样，连续依赖的几个异步操作，就完成了，解决了让人头痛的回调地狱问题。
