@@ -65,3 +65,11 @@ var run = function(){
     return _promise;
 }
 run();
+
+//这是Promise的正常用法，接下来，就是对异步操作结果的处理，接着上面创建的函数run()：
+
+run().then(function(data){
+    console.log(data);
+});
+
+//每个Promise的实例对象，都有一个then的方法，这个方法就是用来处理之前各种异步逻辑的结果。
