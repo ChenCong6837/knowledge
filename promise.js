@@ -157,3 +157,54 @@ run_a().then(function(data){
   step3
 */
 //这样，连续依赖的几个异步操作，就完成了，解决了让人头痛的回调地狱问题。
+
+//======================================================================================
+
+// 异步操作拒绝及中断调用链
+
+/*前文提到过，then方法可以接收两个匿名函数作为参数，第一个参数是Promise置为fulfilled状态后的回调，
+第二个是置为rejected状态的回调。在很多情况下，如果连续的几个异步任务，其中某个异步任务处理失败，
+那么接下来的几个任务很大程度上就不需要继续处理了，那么我们该如何终止then的调用链呢？在Promsie的实例上，
+除了then方法外，还有一个catch方法，catch方法的具体作用，我们沿用上面的代码，将run_a()改造一下来看：
+*/
+//修改run_a的一步操作可能存在拒绝状态
+function run_a(){
+    return new Promise(function(resolve, reject){
+        setTimeout(function(){
+            if(Math.random()>.5){
+                resolve("step1");
+            }else{
+                reject("error");
+            }
+        },1000);
+    });
+}
+
+//这样做不会中断
+run_a().then(function(data){
+    return run_b(data);
+},function(data){
+    //如果是这样处理rejected状态，并不会中断调用链
+    return data;
+}).then(function(data){
+    return run_c(data);
+}).then(function(data){
+    console.log(data);
+});
+
+//在调用链的末尾加上catch方法，当某个环节的Promise的异步处理出错时，将中断其后的调用，直接跳到最后的catch
+run_a().then(function(data){
+    return run_b(data);
+}).then(function(data){
+    return run_c(data);
+}).then(function(data){
+    console.log(data);
+}).catch(function(e){
+    //rejected的状态将直接跳到catch里，剩下的调用不会再继续
+    console.log(e);
+});
+
+作者：KevinWang
+链接：https://juejin.im/post/5aa1fce051882555677e21aa
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
