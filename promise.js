@@ -73,3 +73,48 @@ run().then(function(data){
 });
 
 //每个Promise的实例对象，都有一个then的方法，这个方法就是用来处理之前各种异步逻辑的结果。
+
+/*那么,
+各位可能会问，
+这么做有什么卵用？
+当然有用，到目前为止，我们学会了Promise的基本流程，但是这种用法和嵌套回调函数似乎没什么区别，
+而且增加了复杂度。但是我们说了，Promise的用处，实际上是在于多重异步操作相互依赖的情况下，
+对于逻辑流程的控制。Promise正是通过对两种状态的控制，以此来解决流程的控制。请看如下代码：
+*/
+
+run().then(function(data){
+    //处理resolve的代码
+    cosnole.log("Promise被置为resolve",data);
+},function(data){
+    //处理reject的代码
+    cosnole.log("程序被置为了reject",data);
+})
+
+ /* 如果异步操作获得了我们想要的结果，那我们将调用resolve函数，在then的第一个作为参数的匿名函数中可以获取数据，
+如果我们得到了错误的结果，调用reject函数，在then函数的第二个作为参数的匿名函数中获取错误处理数据。
+这样，一个次完整的Promise调用就结束了。对于Promise的then()方法，then总是会返回一个Promise实例，
+因此你可以一直调用then，形如run().then().then().then().then().then().....
+在一个then()方法调用异步处理成功的状态时，你既可以return一个确定的“值”，也可以再次返回一个Promise实例，
+当返回的是一个确切的值的时候，then会将这个确切的值传入一个默认的Promise实例，并且这个Promise实例会立即置为fulfilled状态，
+以供接下来的then方法里使用。如下所示：
+ */
+
+run().then(function(data){
+    console.log("第一次",data);
+    return data;
+}).then(function(data){
+    console.log("第二次",data);
+    return data;
+}).then(function(data){
+    console.log("第三次",data);
+    return data;
+});
+
+/* 异步处理成功的打印结果：
+    第一次 resolve0.49040459200760167d.js:18 
+    第二次 resolve0.49040459200760167d.js:21 
+    第三次 resolve0.49040459200760167
+    由此可知then方法可以无限调用下去。
+*/
+
+//根绝这个特性，我们就可以将相互依赖的多个异步逻辑，进行比较顺序的管理了。下面举一个拥有3个异步操作的例子，代码有些长。
