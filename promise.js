@@ -49,5 +49,19 @@ var _promise = new Promise(function(resolve, reject){
 这两个函数分别代表将当前Promise置为fulfilled(解决)和rejected(拒绝)两个状态。
 Promise正是通过这两个状态来控制异步操作的结果。接下来我们将讨论Promise的用法，
 实际上Promise上的实例_promise是一个对象，不是一个函数。在声明的时候，Promise传递的参数函数会立即执行，
-因此Promise使用的正确姿势是在其外层再包裹一层函数。
+因此Promise使用的正确姿势是在其外层再包裹一层函数：
 */
+var run = function(){
+    var _promise = new Promise(function(resolve, reject){
+        setTimeout(function(){
+            var rand = Math.random();
+            if(rand<0.5){
+                resolve("resolve" + rand);
+            }else{
+                reject("reject" + rand);
+            }
+        },1000);
+    });
+    return _promise;
+}
+run();
