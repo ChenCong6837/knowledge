@@ -4,11 +4,11 @@
 //我们一般会将两个异步任务嵌套起来，这种情况发生一两次还可以忍，但是发生很多次之后，你的代码就会变成这个熊样：
 
 //===============================回调地狱=============================================
-async1(function(){
-    async2(function(){
-        async3(function(
-            async4(funciton(){
-                async5(function(){
+async1(function () {
+    async2(function () {
+        async3(function (
+            async4(funciton() {
+                async5(function () {
                     //(╯°□°）╯︵┻━┻
                     //...
                 });
@@ -27,16 +27,16 @@ async1(function(){
 //时至今日，很多现代浏览器都已经实现，但是为了兼容，建议自行对Promise进行封装或者使用第三方的解决方
 //案（如webpack对es6语法进行编译）。 那么，我么将得到一个Promise构造函数，新建一个Promise的实例：
 
-var _promise = new Promise(function(resolve, reject){
-    setTimeout(function(){
+var _promise = new Promise(function (resolve, reject) {
+    setTimeout(function () {
         var rand = Math.random();
-        if(rand<0.5){
+        if (rand < 0.5) {
             resolve("resolve" + rand);
-        }else{
+        } else {
             reject("reject" + rand);
         }
-    },1000);
-    
+    }, 1000);
+
 });
 
 /*运行结果:
@@ -51,16 +51,16 @@ Promise正是通过这两个状态来控制异步操作的结果。接下来我�
 实际上Promise上的实例_promise是一个对象，不是一个函数。在声明的时候，Promise传递的参数函数会立即执行，
 因此Promise使用的正确姿势是在其外层再包裹一层函数：
 */
-var run = function(){
-    var _promise = new Promise(function(resolve, reject){
-        setTimeout(function(){
+var run = function () {
+    var _promise = new Promise(function (resolve, reject) {
+        setTimeout(function () {
             var rand = Math.random();
-            if(rand<0.5){
+            if (rand < 0.5) {
                 resolve("resolve" + rand);
-            }else{
+            } else {
                 reject("reject" + rand);
             }
-        },1000);
+        }, 1000);
     });
     return _promise;
 }
@@ -68,7 +68,7 @@ run();
 
 //这是Promise的正常用法，接下来，就是对异步操作结果的处理，接着上面创建的函数run()：
 
-run().then(function(data){
+run().then(function (data) {
     console.log(data);
 });
 
@@ -82,15 +82,15 @@ run().then(function(data){
 对于逻辑流程的控制。Promise正是通过对两种状态的控制，以此来解决流程的控制。请看如下代码：
 */
 
-run().then(function(data){
+run().then(function (data) {
     //处理resolve的代码
-    cosnole.log("Promise被置为resolve",data);
-},function(data){
+    cosnole.log("Promise被置为resolve", data);
+}, function (data) {
     //处理reject的代码
-    cosnole.log("程序被置为了reject",data);
+    cosnole.log("程序被置为了reject", data);
 })
 
- /* 如果异步操作获得了我们想要的结果，那我们将调用resolve函数，在then的第一个作为参数的匿名函数中可以获取数据，
+/* 如果异步操作获得了我们想要的结果，那我们将调用resolve函数，在then的第一个作为参数的匿名函数中可以获取数据，
 如果我们得到了错误的结果，调用reject函数，在then函数的第二个作为参数的匿名函数中获取错误处理数据。
 这样，一个次完整的Promise调用就结束了。对于Promise的then()方法，then总是会返回一个Promise实例，
 因此你可以一直调用then，形如run().then().then().then().then().then().....
@@ -99,14 +99,14 @@ run().then(function(data){
 以供接下来的then方法里使用。如下所示：
  */
 
-run().then(function(data){
-    console.log("第一次",data);
+run().then(function (data) {
+    console.log("第一次", data);
     return data;
-}).then(function(data){
-    console.log("第二次",data);
+}).then(function (data) {
+    console.log("第二次", data);
     return data;
-}).then(function(data){
-    console.log("第三次",data);
+}).then(function (data) {
+    console.log("第三次", data);
     return data;
 });
 
@@ -119,23 +119,23 @@ run().then(function(data){
 //根绝这个特性，我们就可以将相互依赖的多个异步逻辑，进行比较顺序的管理了。下面举一个拥有3个异步操作的例子，代码有些长。
 
 //第一个异步任务
-function run_a(){
-    return new Promise(function(resolve, reject){
+function run_a() {
+    return new Promise(function (resolve, reject) {
         //假设已经进行了异步操作，并且获得了数据
         resolve("step1");
     });
 }
 //第二个异步任务
-function run_b(data_a){
-    return new Promise(function(resolve, reject){
+function run_b(data_a) {
+    return new Promise(function (resolve, reject) {
         //假设已经进行了异步操作，并且获得了数据
         console.log(data_a);
         resolve("step2");
     });
 }
 //第三个异步任务
-function run_c(data_b){
-    return new Promise(function(resolve, reject){
+function run_c(data_b) {
+    return new Promise(function (resolve, reject) {
         //假设已经进行了异步操作，并且获得了数据
         console.log(data_b);
         resolve("step3");
@@ -143,11 +143,11 @@ function run_c(data_b){
 }
 
 //连续调用
-run_a().then(function(data){
+run_a().then(function (data) {
     return run_b(data);
-}).then(function(data){
+}).then(function (data) {
     return run_c(data);
-}).then(function(data){
+}).then(function (data) {
     console.log(data);
 });
 
@@ -168,43 +168,95 @@ run_a().then(function(data){
 除了then方法外，还有一个catch方法，catch方法的具体作用，我们沿用上面的代码，将run_a()改造一下来看：
 */
 //修改run_a的一步操作可能存在拒绝状态
-function run_a(){
-    return new Promise(function(resolve, reject){
-        setTimeout(function(){
-            if(Math.random()>.5){
+function run_a() {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            if (Math.random() > .5) {
                 resolve("step1");
-            }else{
+            } else {
                 reject("error");
             }
-        },1000);
+        }, 1000);
     });
 }
 
 //这样做不会中断
-run_a().then(function(data){
+run_a().then(function (data) {
     return run_b(data);
-},function(data){
+}, function (data) {
     //如果是这样处理rejected状态，并不会中断调用链
     return data;
-}).then(function(data){
+}).then(function (data) {
     return run_c(data);
-}).then(function(data){
+}).then(function (data) {
     console.log(data);
 });
 
 //在调用链的末尾加上catch方法，当某个环节的Promise的异步处理出错时，将中断其后的调用，直接跳到最后的catch
-run_a().then(function(data){
+run_a().then(function (data) {
     return run_b(data);
-}).then(function(data){
+}).then(function (data) {
     return run_c(data);
-}).then(function(data){
+}).then(function (data) {
     console.log(data);
-}).catch(function(e){
+}).catch(function (e) {
     //rejected的状态将直接跳到catch里，剩下的调用不会再继续
     console.log(e);
 });
 
-作者：KevinWang
-链接：https://juejin.im/post/5aa1fce051882555677e21aa
-来源：掘金
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+/* 以上代码简单描述了如何中断链式调用，值得注意的是，catch方法还有try catch的作用，也就是说，
+then里面的逻辑代码如果出现了错误，并不会在控制台抛出，而是会直接有catch捕获。*/
+
+//======================================================================================
+// Promise.all的扩展
+/* 本扩展实现了将多个异步操作合并为一个操作，也就是并行处理异步，最后统一操作结果，注意:本方法只能通过Promise对象直接调用，
+实例不能进行此操作。
+
+all()接收一个参数数组，数组中的每一项都对应一个 */
+
+//第一个异步任务
+function run_a(){
+    return new Promise(function(resolve, reject){                
+        //假设已经进行了异步操作，并且获得了数据
+        resolve("step1")
+    });
+}
+//第二个异步任务
+function run_b(){
+    return new Promise(function(resolve, reject){
+        //假设已经进行了异步操作，并且获得了数据
+        resolve("step2");
+    });
+}
+//第三个异步任务
+function run_c(){
+    return new Promise(function(resolve, reject){
+        //假设已经进行了异步操作，并且获得了数据
+        resolve("step3");
+    });
+}
+
+Promise.all([run_a(),run_b(),run_c()]).then(function(data){
+    console.log(data);
+},function(data){
+    console.log(data);
+});
+
+/*打印结果
+  ["step1","step2","step3"]
+*/
+
+//修改第二个异步任务
+//第一个异步任务
+function run_b(){
+    return new Promise(function(resolve, reject){                
+        //假设已经进行了异步操作，并且获得了数据
+        reject("step2")
+    });
+}
+/*打印结果
+ *捕获了第一个出现的拒绝状态的数据
+  ["step2"]
+*/
+
+//由上所示，并行运算的结果将按照入参顺序放在放在数组里返回。
