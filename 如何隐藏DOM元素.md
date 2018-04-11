@@ -6,4 +6,4 @@
 5. HTML5元素的属性值hidden，（就是给元素声明一个hidden属性），`<div hidden>`；
 6. 元素的font-size、line-height、width、height设置为0；
 7. 设置元素的transform的translateX或者translateY的值为-100%；
-8. 设置元素的transform的transform：scale(0)；
+8. 设置元素的transform的transform：scale(0)。
