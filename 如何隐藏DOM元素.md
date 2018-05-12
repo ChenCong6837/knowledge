@@ -1,5 +1,6 @@
-# 如何隐藏一个DOM元素  
-1. 设置CSS display属性为none，效果：元素不显示，不占位；  
+# 如何隐藏一个DOM元素
+
+1. 设置CSS display属性为none，效果：元素不显示，不占位；
 2. 设置CSS visibility属性为hidden，效果：元素不显示，但占位；
 3. opacity值为0；
 4. position值为absolute，并且将其移到不可见区域；
